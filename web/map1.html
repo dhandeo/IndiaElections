@@ -59,6 +59,13 @@
 			styleId: 22677
 		}).addTo(map);
 
+        $.getJSON("/static/constituencies.json", function(data) {
+            // Get the element with id summary and set the inner text to the result.
+            var constituencies = data;
+            L.geoJson(constituencies).addTo(map);
+        });
+
+
 
 //		// control that shows state info on hover
 //		var info = L.control();

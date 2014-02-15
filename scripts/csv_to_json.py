@@ -24,7 +24,7 @@ geojson = {"type":"FeatureCollection",
 
 def new_feature():
     return {"type" : "Feature", "id" : "" , "properties" : { "name": "", "state" : ""},
-                   "geometry" : {"type" : "polygon", "points" : []}}
+                   "geometry" : {"type" : "Polygon", "points" : []}}
 
 current_feature = new_feature()
 
@@ -38,15 +38,19 @@ for r in reader:
     # Find out if we are dealing with the same constituency
     if r[7] != current_feature["properties"]["name"]:
         # Not so create a new feature and insert current feature
+
         if current_feature["properties"]["name"] != "":
-            current_feature["geometry"]["coordinates"] = reducePoints(current_feature["geometry"]["points"], int(len(current_feature["geometry"]["points"]) * decimation_factor))
+            current_feature["geometry"]["coordinates"] = [ reducePoints(current_feature["geometry"]["points"], int(len(current_feature["geometry"]["points"]) * decimation_factor))]
             del current_feature["geometry"]["points"]
             geojson["features"].append(current_feature)
             print "Feature Saved: ", current_feature["properties"]["name"], current_feature["properties"]["state"], ",", len(current_feature["geometry"]["coordinates"]), " Coordinates."
-            # Create new featire
+            # if len(geojson["features"]) > 3:
+            #     break
+                            # Create new featire
         current_feature = new_feature()
         current_feature["properties"]["name"] = r[7]
         current_feature["properties"]["state"] = r[8]
+        current_feature["id"] = "id" + str(count)
 
     # Aggregate the coordinates
     current_feature["geometry"]["points"].append([float(r[0]), float(r[1])])
@@ -59,8 +63,8 @@ print "Total constituencies: ", len(geojson["features"])
 
 # output
 fout = open(rootpath + "/../web/static/constituencies.json","w")
-# fout.write(json.dumps(geojson,sort_keys=True, indent=4, separators=(',', ': ')))
-fout.write(json.dumps(geojson))
+fout.write(json.dumps(geojson,indent=4, separators=(',', ': ')))
+# fout.write(json.dumps(geojson))
 fout.close()
 
 

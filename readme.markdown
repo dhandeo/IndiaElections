@@ -4,6 +4,16 @@ IndiaElections
 This is an effort to explore parliamentary elections in India over the years, using interactive map based visualizations.
 Any ideas, contributions welcome.
 
+To run, serve the files with ./web as the webroot.
+
+I am running as 
+
+'''shell
+
+$python -m SimpleHTTPServer
+
+'''
+
 
 Attribution
 ===========
