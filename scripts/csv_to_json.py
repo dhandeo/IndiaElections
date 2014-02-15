@@ -12,7 +12,9 @@ import csv
 import sys
 import os
 rootpath = os.path.abspath(os.path.dirname(__file__))
+from Polygon.Utils import reducePoints
 
+decimation_factor = 0.2
 reader = csv.reader(open(rootpath + "/../data/india_spatial.csv"), skipinitialspace=True)
 
 count = -1
@@ -22,7 +24,7 @@ geojson = {"type":"FeatureCollection",
 
 def new_feature():
     return {"type" : "Feature", "id" : "" , "properties" : { "name": "", "state" : ""},
-                   "geometry" : {"type" : "polygon", "coordinates" : []}}
+                   "geometry" : {"type" : "polygon", "points" : []}}
 
 current_feature = new_feature()
 
@@ -37,17 +39,23 @@ for r in reader:
     if r[7] != current_feature["properties"]["name"]:
         # Not so create a new feature and insert current feature
         if current_feature["properties"]["name"] != "":
+            current_feature["geometry"]["coordinates"] = reducePoints(current_feature["geometry"]["points"], int(len(current_feature["geometry"]["points"]) * decimation_factor))
+            del current_feature["geometry"]["points"]
             geojson["features"].append(current_feature)
-            print "Feature Saved: ", current_feature["properties"]["name"], current_feature["properties"]["state"],  ",  ", len(current_feature["geometry"]["coordinates"]), " Coordinates."
+            print "Feature Saved: ", current_feature["properties"]["name"], current_feature["properties"]["state"], ",", len(current_feature["geometry"]["coordinates"]), " Coordinates."
             # Create new featire
         current_feature = new_feature()
-        current_feature["properties"]["name"]  = r[7]
-        current_feature["properties"]["state"]  = r[8]
+        current_feature["properties"]["name"] = r[7]
+        current_feature["properties"]["state"] = r[8]
 
     # Aggregate the coordinates
-    current_feature["geometry"]["coordinates"].append([float(r[0]), float(r[1])])
+    current_feature["geometry"]["points"].append([float(r[0]), float(r[1])])
 
 print "Total constituencies: ", len(geojson["features"])
+
+# Reduce the polygons
+
+
 
 # output
 fout = open(rootpath + "/../web/static/constituencies.json","w")
