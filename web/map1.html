@@ -14,9 +14,15 @@
 	<meta name="viewport" content="width=device-width, initial-scale=1.0">
 
 	<style>
+        html,body
+        {
+          height: 100%;
+          margin: 0;
+          padding: 0;
+        }
 		#map {
-			width: 800px;
-			height: 500px;
+			width: 100%;
+			height: 100%;
 		}
 
 		.info {
@@ -47,11 +53,11 @@
 	</style>
 </head>
 <body>
-	<div id="map"></div>
+	<div id="map" style="width:100%;height:100%"></div>
 
 	<script type="text/javascript">
 
-		var map = L.map('map').setView([21, 78], 6);
+		var map = L.map('map').setView([21, 78], 5);
 
 		var cloudmade = L.tileLayer('http://{s}.tile.cloudmade.com/{key}/{styleId}/256/{z}/{x}/{y}.png', {
 			attribution: 'Map data &copy; 2011 OpenStreetMap contributors, Imagery &copy; 2011 CloudMade',
@@ -78,32 +84,28 @@
 
 		info.addTo(map);
 
-        var constituency_color = []
+       function getRandomInt (min, max) {
+            return Math.floor(Math.random() * (max - min + 1)) + min;
+        };
+
+        var constituency_color = [];
         for(var i = 0; i < 545; i ++) {
-            constituency_color.push(parseInt(Math.random() * 6));
+            constituency_color.push(getRandomInt(0,8));
         }
 
 		// get color depending on population density value
 		function getColor(d) {
 
-            var colors = ['rgb(228,26,28)','rgb(55,126,184)','rgb(77,175,74)','rgb(152,78,163)','rgb(255,127,0)','rgb(255,255,51)'];
+            var colors = ['rgb(228,26,28)','rgb(55,126,184)','rgb(77,175,74)','rgb(152,78,163)','rgb(255,127,0)','rgb(255,255,51)','rgb(166,86,40)','rgb(247,129,191)','rgb(153,153,153)']
+//            var colors = ['rgb(228,26,28)','rgb(55,126,184)','rgb(77,175,74)','rgb(152,78,163)','rgb(255,127,0)','rgb(255,255,51)'];
             return colors[constituency_color[parseInt(d)]]
-//            // Return random
-//			return d > 1000 ? '#800026' :
-//			       d > 500  ? '#BD0026' :
-//			       d > 200  ? '#E31A1C' :
-//			       d > 100  ? '#FC4E2A' :
-//			       d > 50   ? '#FD8D3C' :
-//			       d > 20   ? '#FEB24C' :
-//			       d > 10   ? '#FED976' :
-//			                  '#FFEDA0';
 		}
 
 		function style(feature) {
 			return {
-				weight: 2,
+				weight: 0.5,
 				opacity: 1,
-				color: 'white',
+				color: 'black',
 				dashArray: '3',
 				fillOpacity: 0.7,
 				fillColor: getColor(feature.id)
@@ -114,15 +116,15 @@
 			var layer = e.target;
 
 			layer.setStyle({
-				weight: 5,
+				weight: 2,
 				color: '#666',
 				dashArray: '',
 				fillOpacity: 0.7
 			});
 
-			if (!L.Browser.ie && !L.Browser.opera) {
-				layer.bringToFront();
-			}
+//			if (!L.Browser.ie && !L.Browser.opera) {
+//				layer.bringToFront();
+//			}
 
 			info.update(layer.feature.properties);
 		}
