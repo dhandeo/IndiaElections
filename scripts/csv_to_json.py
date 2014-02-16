@@ -27,7 +27,7 @@ def new_feature():
                    "geometry" : {"type" : "Polygon", "points" : []}}
 
 current_feature = new_feature()
-
+const_count = 0
 for r in reader:
     # Skip first row of titles
     count = count + 1
@@ -50,7 +50,9 @@ for r in reader:
         current_feature = new_feature()
         current_feature["properties"]["name"] = r[7]
         current_feature["properties"]["state"] = r[8]
-        current_feature["id"] = "id" + str(count)
+        current_feature["id"] = str(const_count)
+        const_count = const_count + 1
+
 
     # Aggregate the coordinates
     current_feature["geometry"]["points"].append([float(r[0]), float(r[1])])

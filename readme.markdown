@@ -8,11 +8,11 @@ To run, serve the files with ./web as the webroot.
 
 I am running as 
 
-'''shell
+```shell
 
 $python -m SimpleHTTPServer
 
-'''
+```
 
 
 Attribution
