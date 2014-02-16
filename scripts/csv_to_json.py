@@ -13,6 +13,8 @@ import sys
 import os
 rootpath = os.path.abspath(os.path.dirname(__file__))
 from Polygon.Utils import reducePoints
+sys.path.append(rootpath)
+from renames import rename_map
 
 decimation_factor = 0.2
 reader = csv.reader(open(rootpath + "/../data/india_spatial.csv"), skipinitialspace=True)
@@ -40,6 +42,13 @@ for r in reader:
         # Not so create a new feature and insert current feature
 
         if current_feature["properties"]["name"] != "":
+            oldname = current_feature["properties"]["name"].upper()
+            if oldname in rename_map.keys():
+                newname = rename_map[oldname]
+            else:
+                newname = oldname
+
+            current_feature["properties"]["name"] = newname.title()
             current_feature["geometry"]["coordinates"] = [ reducePoints(current_feature["geometry"]["points"], int(len(current_feature["geometry"]["points"]) * decimation_factor))]
             del current_feature["geometry"]["points"]
             geojson["features"].append(current_feature)
@@ -59,7 +68,6 @@ for r in reader:
 
 print "Total constituencies: ", len(geojson["features"])
 
-# Reduce the polygons
 
 
 
