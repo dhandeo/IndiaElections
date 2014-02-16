@@ -148,7 +148,7 @@
 			});
 		}
 
-        $.getJSON("/static/constituencies.json", function(data) {
+        $.getJSON("http://dhandeo.github.io/IndiaElections/web/static/constituencies.json", function(data) {
             // Get the element with id summary and set the inner text to the result.
             constituencies = data;
             geojson = L.geoJson(constituencies, {
