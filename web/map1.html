@@ -59,34 +59,36 @@
 			styleId: 22677
 		}).addTo(map);
 
-        $.getJSON("/static/constituencies.json", function(data) {
-            // Get the element with id summary and set the inner text to the result.
-            var constituencies = data;
-            L.geoJson(constituencies).addTo(map);
-        });
+        var constituencies;
 
+		// control that shows state info on hover
+		var info = L.control();
 
+		info.onAdd = function (map) {
+			this._div = L.DomUtil.create('div', 'info');
+			this.update();
+			return this._div;
+		};
 
-//		// control that shows state info on hover
-//		var info = L.control();
-//
-//		info.onAdd = function (map) {
-//			this._div = L.DomUtil.create('div', 'info');
-//			this.update();
-//			return this._div;
-//		};
-//
-//		info.update = function (props) {
-//			this._div.innerHTML = '<h4>US Population Density</h4>' +  (props ?
-//				'<b>' + props.name + '</b><br />' + props.density + ' people / mi<sup>2</sup>'
-//				: 'Hover over a state');
-//		};
-//
-//		info.addTo(map);
-//
-//
-//		// get color depending on population density value
-//		function getColor(d) {
+		info.update = function (props) {
+			this._div.innerHTML = '<h4> Constituency </h4>' +  (props ?
+				'<b>' + props.name + '</b> <br/>' + props.state
+				: 'Hover over a state');
+		};
+
+		info.addTo(map);
+
+        var constituency_color = []
+        for(var i = 0; i < 545; i ++) {
+            constituency_color.push(parseInt(Math.random() * 6));
+        }
+
+		// get color depending on population density value
+		function getColor(d) {
+
+            var colors = ['rgb(228,26,28)','rgb(55,126,184)','rgb(77,175,74)','rgb(152,78,163)','rgb(255,127,0)','rgb(255,255,51)'];
+            return colors[constituency_color[parseInt(d)]]
+//            // Return random
 //			return d > 1000 ? '#800026' :
 //			       d > 500  ? '#BD0026' :
 //			       d > 200  ? '#E31A1C' :
@@ -95,60 +97,65 @@
 //			       d > 20   ? '#FEB24C' :
 //			       d > 10   ? '#FED976' :
 //			                  '#FFEDA0';
-//		}
+		}
+
+		function style(feature) {
+			return {
+				weight: 2,
+				opacity: 1,
+				color: 'white',
+				dashArray: '3',
+				fillOpacity: 0.7,
+				fillColor: getColor(feature.id)
+			};
+		}
 //
-//		function style(feature) {
-//			return {
-//				weight: 2,
-//				opacity: 1,
-//				color: 'white',
-//				dashArray: '3',
-//				fillOpacity: 0.7,
-//				fillColor: getColor(feature.properties.density)
-//			};
-//		}
-//
-//		function highlightFeature(e) {
-//			var layer = e.target;
-//
-//			layer.setStyle({
-//				weight: 5,
-//				color: '#666',
-//				dashArray: '',
-//				fillOpacity: 0.7
-//			});
-//
-//			if (!L.Browser.ie && !L.Browser.opera) {
-//				layer.bringToFront();
-//			}
-//
-//			info.update(layer.feature.properties);
-//		}
-//
-//		var geojson;
-//
-//		function resetHighlight(e) {
-//			geojson.resetStyle(e.target);
-//			info.update();
-//		}
-//
-//		function zoomToFeature(e) {
-//			map.fitBounds(e.target.getBounds());
-//		}
-//
-//		function onEachFeature(feature, layer) {
-//			layer.on({
-//				mouseover: highlightFeature,
-//				mouseout: resetHighlight,
-//				click: zoomToFeature
-//			});
-//		}
-//
-//		geojson = L.geoJson(statesData, {
-//			style: style,
-//			onEachFeature: onEachFeature
-//		}).addTo(map);
-//
+		function highlightFeature(e) {
+			var layer = e.target;
+
+			layer.setStyle({
+				weight: 5,
+				color: '#666',
+				dashArray: '',
+				fillOpacity: 0.7
+			});
+
+			if (!L.Browser.ie && !L.Browser.opera) {
+				layer.bringToFront();
+			}
+
+			info.update(layer.feature.properties);
+		}
+
+		var geojson;
+
+		function resetHighlight(e) {
+			geojson.resetStyle(e.target);
+			info.update();
+		}
+
+		function zoomToFeature(e) {
+			map.fitBounds(e.target.getBounds());
+		}
+
+		function onEachFeature(feature, layer) {
+			layer.on({
+				mouseover: highlightFeature,
+				mouseout: resetHighlight,
+				click: zoomToFeature
+			});
+		}
+
+        $.getJSON("/static/constituencies.json", function(data) {
+            // Get the element with id summary and set the inner text to the result.
+            constituencies = data;
+            geojson = L.geoJson(constituencies, {
+                style: style,
+                onEachFeature: onEachFeature
+            }).addTo(map);
+        });
+
+
 //		map.attributionControl.addAttribution('Population data &copy; <a href="http://census.gov/">US Census Bureau</a>');
 //
 //
