@@ -1,10 +1,16 @@
+
 IndiaElections
 ==============
 
 This is an effort to explore parliamentary elections in India over the years, using interactive map based visualizations.
 Any ideas, contributions welcome.
 
-To run, serve the files with ./web as the webroot.
+See demo at 
+
+http://dhandeo.github.io/IndiaElections/web/map1.html
+
+
+To run development server, serve the files with ./web as the webroot.
 
 I am running as 
 
